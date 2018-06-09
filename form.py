@@ -7,6 +7,7 @@ class dialogForm(QDialog):
         super(dialogForm, self).__init__(parent)
         self.resize(400,100) # zmniejszamy rozmiar formy
         self.setWindowTitle("probkowanie")
+        self.on_ok = None
 
         comboLayout=QHBoxLayout() #1
         comboLabel=QLabel("Wybierz plik wektorowy") #2
@@ -15,9 +16,6 @@ class dialogForm(QDialog):
         comboLayout.addWidget(comboLabel) #5
         comboLayout.addWidget(self.chooseCombo) #5
         comboLayout.addStretch()
-        fieldLayout1=QHBoxLayout()
-        chooseFiledButton1=QPushButton("...")
-        comboLayout.addWidget(chooseFiledButton1)
             
         comboLayout_r=QHBoxLayout() #1
         comboLabel_r=QLabel("Wybierz plik rastrowy") #2
@@ -27,11 +25,6 @@ class dialogForm(QDialog):
         comboLayout_r.addWidget(self.chooseCombo_r)
         comboLayout_r.addStretch()
             
-        fieldLayout2=QHBoxLayout()
-        chooseFiledButton2=QPushButton("...")
-        comboLayout_r.addWidget(chooseFiledButton2)
-           
-            
         fieldLayout=QHBoxLayout()
         fieldLabel=QLabel("&Zapisz do pliku")
         self.chooseField=QLineEdit()
@@ -40,6 +33,14 @@ class dialogForm(QDialog):
         fieldLayout.addWidget(fieldLabel) #5
         fieldLayout.addWidget(self.chooseField)
         fieldLayout.addWidget(chooseFieldButton)
+
+        colLayout=QHBoxLayout()
+        colLabel=QLabel("Podaj nazwe kolumny:")
+        self.column_choose=QLineEdit()
+        colLabel.setBuddy(self.column_choose)
+        colLayout.addWidget(colLabel)
+        colLayout.addWidget(self.column_choose)
+        colLayout.addStretch()
                         
         buttonBox = QDialogButtonBox(self)
         buttonBox.setStandardButtons(QDialogButtonBox.Cancel|QDialogButtonBox.Ok)
@@ -49,14 +50,16 @@ class dialogForm(QDialog):
         mainLayout.addStretch()
         mainLayout.addLayout(comboLayout_r)
         mainLayout.addStretch()
+        mainLayout.addLayout(colLayout)
+        mainLayout.addStretch()
         mainLayout.addLayout(fieldLayout)
         mainLayout.addWidget(buttonBox)
         self.setLayout(mainLayout)
 
-        self.connect(buttonBox, SIGNAL("accepted()"), SLOT("accept()"))  # 4
+
+
+        self.connect(buttonBox, SIGNAL("accepted()"), self.ok)  # 4
         self.connect(buttonBox, SIGNAL("rejected()"), SLOT("reject()"))
-        chooseFiledButton1.clicked.connect(self.chooseButton_clicked1)
-        chooseFiledButton2.clicked.connect(self.chooseButton_clicked1)
         chooseFieldButton.clicked.connect(self.chooseButton_clicked)
 
     def chooseButton_clicked(self):  # 2A
@@ -64,7 +67,5 @@ class dialogForm(QDialog):
             getOpenFileName(self, "File to take extend from", "", "All Files (*)")  # 2B
         self.chooseField.setText(fileName)  # 2C
 
-
-    def chooseButton_clicked1(self):  # 2A
-        fileName = QFileDialog. \
-            getOpenFileName(self, "File to take extend from", "", "All Files (*)")  # 2B
+    def ok(self):
+        self.on_ok()

@@ -32,6 +32,7 @@ class TestPlugin:
         # save reference to the QGIS interface
         self.iface = iface
         self.dialog = dialogForm()
+        self.dialog.on_ok = self.on_ok
 
     def initGui(self):
         # create action that will start plugin configuration
@@ -62,12 +63,25 @@ class TestPlugin:
         layers = self.iface.legendInterface().layers()
         print(layers)
         #code.interact(local=dict(globals(), **locals()))
-        layer_list_r = [""]
-        layer_list_v = [""]
+        self.dialog.chooseCombo.addItem('')
+        self.dialog.chooseCombo_r.addItem('')
         for layer in layers:
             if layer.type() == QgsMapLayer.VectorLayer:
-                layer_list_v.append(layer.name())
+                self.dialog.chooseCombo.addItem(layer.name(), layer)
             elif layer.type() == QgsMapLayer.RasterLayer:
-                layer_list_r.append(layer.name())
-        self.dialog.chooseCombo.addItems(layer_list_v)
-        self.dialog.chooseCombo_r.addItems(layer_list_r)
+                self.dialog.chooseCombo_r.addItem(layer.name(), layer)
+
+    def on_ok(self):
+        vector = self.dialog.chooseCombo.itemData(self.dialog.chooseCombo.currentIndex())
+        raster = self.dialog.chooseCombo_r.itemData(self.dialog.chooseCombo_r.currentIndex())
+        features = vector.getFeatures()
+        #layer.startEditing()
+        for feature in features:
+            point = feature.geometry().asPoint()
+            value = raster.dataProvider().identify(point, QgsRaster.IdentifyFormatValue)
+            print(value.results())
+            #layer.changeAttributeValue(feature.id(), last_field_id, value)  # 7
+            #layer.commitChanges()
+        #code.interact(local=dict(globals(), **locals()))
+        print(vector.name())
+        print(raster.name())
