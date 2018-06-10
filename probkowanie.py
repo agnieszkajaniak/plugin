@@ -75,17 +75,26 @@ class TestPlugin:
         vector = self.dialog.chooseCombo.itemData(self.dialog.chooseCombo.currentIndex())
         raster = self.dialog.chooseCombo_r.itemData(self.dialog.chooseCombo_r.currentIndex())
         vector.startEditing()
-        pr = vector.dataProvider()
-        pr.addAttributes([QgsField("v", QVariant.Double)])
-        vector.updateFields()
+
+        attribute_name = self.dialog.column_choose.text()
+
+        create_new_attribute = True
+
+        for i in vector.attributeList():
+            if vector.attributeDisplayName(i) == attribute_name:
+                create_new_attribute = False
+
+        if create_new_attribute:
+            pr = vector.dataProvider()
+            pr.addAttributes([QgsField(attribute_name, QVariant.Double)])
+            vector.updateFields()
+
         features = vector.getFeatures()
         for feature in features:
             point = feature.geometry().asPoint()
             value = raster.dataProvider().identify(point, QgsRaster.IdentifyFormatValue)
-            feature.setAttribute('v', value.results()[1])
+            feature.setAttribute(attribute_name, value.results().values()[0])
             vector.updateFeature(feature)
         #code.interact(local=dict(globals(), **locals()))
         vector.commitChanges()
         vector.updateFields()
-        print(vector.name())
-        print(raster.name())
