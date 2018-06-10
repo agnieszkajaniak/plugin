@@ -98,4 +98,6 @@ class TestPlugin:
         #code.interact(local=dict(globals(), **locals()))
         vector.commitChanges()
         vector.updateFields()
+        _writer = QgsVectorFileWriter.writeAsVectorFormat(vector, self.dialog.chooseField.text(), "utf-8", None, "ESRI Shapefile")
+        print(_writer)
         self.dialog.accept()

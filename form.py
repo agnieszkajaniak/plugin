@@ -63,9 +63,9 @@ class dialogForm(QDialog):
         chooseFieldButton.clicked.connect(self.chooseButton_clicked)
 
     def chooseButton_clicked(self):  # 2A
-        fileName = QFileDialog. \
-            getOpenFileName(self, "File to take extend from", "", "All Files (*)")  # 2B
-        self.chooseField.setText(fileName)  # 2C
+        filename = QFileDialog. \
+            getSaveFileName(self.chooseField, "Select output file ", "", '*.shp')
+        self.chooseField.setText(filename)
 
     def ok(self):
         self.on_ok()
