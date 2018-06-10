@@ -98,3 +98,4 @@ class TestPlugin:
         #code.interact(local=dict(globals(), **locals()))
         vector.commitChanges()
         vector.updateFields()
+        self.dialog.accept()
