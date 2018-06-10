@@ -74,14 +74,18 @@ class TestPlugin:
     def on_ok(self):
         vector = self.dialog.chooseCombo.itemData(self.dialog.chooseCombo.currentIndex())
         raster = self.dialog.chooseCombo_r.itemData(self.dialog.chooseCombo_r.currentIndex())
+        vector.startEditing()
+        pr = vector.dataProvider()
+        pr.addAttributes([QgsField("v", QVariant.Double)])
+        vector.updateFields()
         features = vector.getFeatures()
-        #layer.startEditing()
         for feature in features:
             point = feature.geometry().asPoint()
             value = raster.dataProvider().identify(point, QgsRaster.IdentifyFormatValue)
-            print(value.results())
-            #layer.changeAttributeValue(feature.id(), last_field_id, value)  # 7
-            #layer.commitChanges()
+            feature.setAttribute('v', value.results()[1])
+            vector.updateFeature(feature)
         #code.interact(local=dict(globals(), **locals()))
+        vector.commitChanges()
+        vector.updateFields()
         print(vector.name())
         print(raster.name())
